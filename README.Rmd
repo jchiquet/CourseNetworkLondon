@@ -1,0 +1,70 @@
+---
+title: "An introduction to network analysis and inference"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+> This repository regroups the material (slides, labs) associated to the course about "graph analysis and inference", as a part of the course of Computational Epidemiology module on Friday 8 Feb 2019 at Imperial College.
+
+## Slides
+
+  - **Statistics on network data, Graph Partitionning, Clustering**	- [slides](https://github.com/jchiquet/CourseNetworkLondon/raw/master/slides/DescriptiveAnalysis/DescriptiveAnalysis.pdf)
+  - **Network Inference with sparse Graphical Models**	- [slides](https://github.com/jchiquet/CourseNetworkLondon/raw/master/slides/NetworkInference/NetworkInference.pdf)
+
+## Labs 
+
+You need to have a recent version of [Rstudio](https://www.rstudio.com/products/rstudio/download/) installed with [R](https://cran.r-project.org) >= 3.5.1 and the following packages installed:
+
+### Basic packages for R extensions
+
+```{r other packages, eval = FALSE}
+install.packages("devtools")
+install.packages("knitr")
+install.packages("rmarkdown")
+```
+
+### Packages for graph manipulation
+
+```{r graph packages, eval = FALSE}
+install.packages("igraph")
+install.packages("sand")
+install.packages("sna")
+```
+
+### Packages for stochastic block models
+
+```{r SBM packages, eval = FALSE}
+install.packages("blockmodels")
+```
+
+### Packages for network inference
+
+```{r GGM packages, eval = FALSE}
+install.packages("simone")
+install.packages("huge")
+```
+
+### Packages for fancy plotting
+
+```{r tidy packages, eval = FALSE}
+install.packages("tidyverse")
+install.packages("corrplot")
+install.packages("ggraph")
+```
+
+## References 
+
+* [Rstudio cheat sheets](https://www.rstudio.com/resources/cheatsheets/)
+
+Some books
+
+* [Statistical Analysis of Network Data: Methods and Models, by Eric D. Kolaczyk](https://books.google.fr/books?id=Q-GNLsqq7QwC&source=gbs_book_similarbooks)
+* [Statistical Analysis of Network Data with R, by Eric D. Kolaczyk, Gábor Csárdi](https://books.google.fr/books?id=cNMhBAAAQBAJ&source=gbs_navlinks_s)
+* [Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. The elements of statistical learning. Vol. 1. No. 10. New York, NY, USA:: Springer series in statistics, 2001.](https://web.stanford.edu/~hastie/ElemStatLearn/)
+* Bishop, C. (2000). Introduction to graphical modelling, 2nd edn. Springer, New York.
+* Højsgaard, S., Edwards , D., Lauritzen, S. (2012). Graphical Models with R. Springer,  New York.
+
+

@@ -1,0 +1,89 @@
+\documentclass[10pt, c, xcolor=x11names]{beamer}
+
+\def\currentCourse{An introduction to graph analysis and modeling}
+\def\currentInstitute{Julien Chiquet}
+\def\currentLogo{../common_figs/logo_imperial}
+\def\currentDate{February, 2019}
+\def\currentChapter{Network Inference with Sparse Graphical Models}
+
+<<preamble, child='../common_preamble.Rnw'>>=
+@
+
+\definecolor{darkred}{rgb}{0.65,0.15,0.25}
+
+\usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
+\tikzstyle{every state}=[fill=red,draw=none,scale=0.7,font=\small,text=white]
+\tikzstyle{every edge}=[-,shorten >=1pt,auto,thin,draw]
+\tikzstyle{alertstate}=[fill=mblue]
+
+\pgfdeclareimage[width=.18\textwidth]{microarray}{figures/puce}
+\pgfdeclareimage[width=.3\textwidth]{affymetrix}{figures/affy}
+
+\pgfdeclareimage[width=.18\textwidth]{sequencer}{figures/sequencer}
+\pgfdeclareimage[width=.25\textwidth]{ngs}{figures/ngs_data}
+
+\pgfdeclareimage[width=.2\textwidth]{rna_seq}{figures/rna_seq}
+\pgfdeclareimage[width=.5cm]{computer}{figures/computer}
+
+\begin{document}
+
+\dotitlepage
+
+\include{motivations}
+
+\begin{frame}
+  \frametitle{Outline}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\include{ggm}
+
+\include{inference}
+
+\include{limitations}
+
+\begin{frame}
+  \frametitle{Extensions motivated by biological data}
+
+  \begin{block}{\alert{Strengthen the inference } by}
+    \vspace{-.25cm}
+
+    \begin{itemize}
+    \item accounting for biological features
+
+      \begin{enumerate}
+      \item \alert{structure} of the network (organization of biological mechanisms)
+      \item sample \alert{heterogeneity} (structure of the population)
+      \item horizontal \alert{integration} (use multiple data and platforms)
+      \item Deal with \alert{covariates}
+      \end{enumerate} 
+
+    \item accounting for data features 
+
+      \begin{enumerate}
+      \item What if some \alert{important actor is missing}?
+      \item Extend to \alert{non strictly normal} distribution
+      \item Deal with a \alert{large number} of actors
+      \end{enumerate}
+    \end{itemize}
+
+  $\rightsquigarrow$ How? Essentially by crafting the regularization according to our prior knowledge  
+
+  \end{block}
+
+\end{frame}
+
+%% account for underlying structure of the network
+\include{simone}
+
+%% account for sample heterogeneity
+\include{multitask}
+
+%% account for multivariate data
+\include{multiattributes}
+
+%% Handling count data-> Poisson Log-normal
+<<sparse_PLN, child='PLNnetworks.Rnw'>>=
+@
+
+\end{document}

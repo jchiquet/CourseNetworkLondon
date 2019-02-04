@@ -134,11 +134,6 @@
 
 \dotitlepage
 
-\begin{frame}
-  \frametitle{Outline}
-  \tableofcontents[hideallsubsections]
-\end{frame}
-
 % \begin{frame} 
 %   \frametitle{References}
 % 
@@ -162,6 +157,75 @@
 %     \end{thebibliography}
 % 
 % \end{frame}
+
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{Statistical analysis of Networks}
+  \framesubtitle{Different questions}
+
+  \begin{alertblock}{Understanding the network topology}
+    \vspace{-.25cm}
+    \begin{itemize}
+    \item Data = observed network
+    \item Questions: central nodes? cluster structure? small-world property?
+    \end{itemize}
+  \end{block}
+  
+  \vfill
+
+  \begin{block}{Inferring/Reconstructing the network}
+    \vspace{-.25cm}
+    \begin{itemize}
+    \item Data = repeated signal observed at each node
+    \item Questions: which nodes are connected?
+    \end{itemize}
+  \end{alertblock}
+
+  \vfill
+
+  \begin{block}{\alert{Each to be combined with}}
+    covariates, time, heterogeneous data set, missing data, ...  
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Reconstruction and analysis of biological networks} 
+  \framesubtitle{E. coli regulatory network}  
+
+  \begin{columns}
+    \begin{column}{.4\textwidth}
+      \begin{small}
+        \begin{block}{Target network}
+          Relations between genes and their products
+          \begin{itemize}
+          \item highly structured
+          \item always incomplete
+          \end{itemize}
+        \end{block}
+      \end{small}
+      \begin{small}
+        \begin{block}{Data and method}
+          \begin{itemize}
+          \item transcriptomic data
+          \item \alert{Inference}: sparse Gaussian graphical model
+          \item \alert{Analysis}: Stochastic Block Model
+          \end{itemize}
+        \end{block}
+      \end{small}
+    \end{column}
+    \begin{column}{.55\textwidth}
+      \includegraphics[width=\textwidth]{figures/net_reg_ecoli}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{Outline}
+  \tableofcontents[hideallsubsections]
+\end{frame}
 
 %% ==========================================================================
 \section{Basic notions on graphs and networks}

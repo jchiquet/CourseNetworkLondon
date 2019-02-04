@@ -1,0 +1,16 @@
+base
+knitr
+igraph
+igraphdata
+sand
+Matrix
+ggplot2
+ggraph
+gridExtra
+statnet.common
+network
+sna
+Rcpp
+digest
+blockmodels
+RColorBrewer

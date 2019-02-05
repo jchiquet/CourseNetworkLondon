@@ -1,0 +1,226 @@
+---
+title: "Network analysis of the Lymphome proteomics data set"
+author: "Julien Chiquet"
+date: "2/4/2019"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, warnings = FALSE)
+```
+
+## Requirements
+
+```{r requirement, message = FALSE}
+library(tidyverse)
+library(corrplot)
+library(GGally)
+library(igraph)
+library(ggfortify)
+library(blockmodels)
+library(QUIC)
+library(stabs)
+library(simone)
+library(RColorBrewer)
+pal <- brewer.pal(10, "Set3") # a fancy palette for graph
+```
+
+## Basic proteomics data analysis
+
+We first load both proteomics and covariates
+
+```{r data loading}
+proteomics <- readRDS("proteins.rds")
+covariates <- readRDS("covariates.rds")
+```
+
+Let us have a quick look on both data frames:
+
+### Covariates
+
+First a quick look,
+
+```{r see covariates}
+covariates %>% head() %>% knitr::kable()
+```
+
+Then a pairs plot:
+
+```{r covariates pairs}
+GGally::ggpairs(covariates, columns = 3:5, aes(colour=disease))
+```
+
+### Proteomics
+
+Again first a quick look:
+
+```{r see proteomics}
+proteomics %>% head() %>% knitr::kable()
+```
+
+Simple PCA does not seem to show a strong structuration of the data due to the disease status:
+
+```{r see PCA proteomics}
+pca <- prcomp(proteomics, scale. = TRUE)
+for_plot <- as_tibble(proteomics) %>% 
+  add_column(disease = covariates$disease,
+             type    = covariates$type,
+             sex     = covariates$sex)
+autoplot(pca, loadings = TRUE, loadings.label = TRUE,
+         data = for_plot, colour = 'disease')
+# autoplot(pca, loadings = TRUE, loadings.label = TRUE,
+#          data = for_plot, colour = 'sex')
+# autoplot(pca, loadings = TRUE, loadings.label = TRUE,
+#          data = for_plot, colour = 'type')
+```
+
+Still, there is some structure between the proteines:
+
+```{r corrplot}
+corrplot(cor(proteomics))
+```
+
+## Tutorial: proteomics network reconstruction on pooled data
+
+### Neighborhood selection with *simone*
+
+We first retrieve the whole path of inferred networks with *simone*.
+
+```{r pooled network, results = FALSE}
+pooled_path <- simone(proteomics)
+```
+
+And extract one of them:
+
+```{r singe network}
+myNetwork <- getNetwork(pooled_path)
+plot(myNetwork)
+```
+
+There seems to be two clusters: let us manually adjus a stochastic block model on this network
+
+```{r adjust SBM pooled}
+subNetwork <- myNetwork$A
+to_remove <- rowSums(subNetwork) == 0
+subNetwork <- subNetwork[!to_remove, !to_remove]
+mySBM_collection <- 
+  BM_bernoulli(
+    "SBM_sym", 
+    subNetwork, 
+    verbosity = 0
+  )
+mySBM_collection$estimate()
+```
+
+The ICL criterion choses 3 clusters. 
+
+```{r extract clusters single prot}
+clusters <- apply(mySBM_collection$memberships[[2]]$Z, 1, which.max)
+```
+
+The following piece of code plots a fancy version of this graph
+thanks to the *igraph* package: first from the adjacency matrix, second from the partial correlation
+
+```{r plot SBM igraph}
+g1 <- graph_from_adjacency_matrix(subNetwork, mode = "undirected", diag = FALSE)
+V(g1)$class <- clusters
+V(g1)$size <- degree(g1) * 5
+V(g1)$frame.color <- "white"
+V(g1)$color <- pal[V(g1)$class]
+E(g1)$arrow.mode <- 0
+
+partialCor <- -myNetwork$Theta
+partialCor <- partialCor[!to_remove, !to_remove]
+
+g2 <- graph_from_adjacency_matrix(partialCor, weighted = TRUE, mode = "undirected", diag = FALSE)
+V(g2)$class <- clusters
+V(g2)$size <- degree(g2) * 5
+V(g2)$frame.color <- "white"
+V(g2)$color <- pal[V(g2)$class]
+E(g2)$arrow.mode <- 0
+
+par(mfrow = c(1,2))
+plot(g1, main = "Adjacency Network")
+plot(g2, edge.width=20*E(g2)$weight, main = "Partial Correlations")
+```
+
+### Graphical-Lasso with Stability Selection
+
+The graphical-Lasso is efficiently implemented by the QUIC algorithm. An alternative to BIC to choose the most stables edges in the network is the stability selection approach. It subsamples the original data set, run the algorithm on each subsample and estimate the probability of selection of each edge along the path.
+
+
+```{r stabsel + graphical lasso, cache = TRUE, warning=FALSE, message = FALSE}
+Glasso_stability <- stabsel(x = proteomics, fitfun = "quic.graphical_model", cutoff = 0.985, PFER = 5)
+```
+
+```{r stabsel plot}
+plot(Glasso_stability, type = "maxsel", labels = 1:50, main = "selection") 
+```
+
+```{r extract Glasso net}
+g_stabs <- 
+  graph_from_edgelist(
+    do.call(rbind, strsplit(names(Glasso_stability$selected), " : ")),
+    directed = FALSE
+  )
+```
+
+Now try to find some structure thanks to blockmodels:
+```{r SBM Glasso}
+mySBM_collection <- 
+  BM_bernoulli(
+    "SBM_sym", 
+    as_adjacency_matrix(g_stabs, sparse = FALSE),
+    verbosity = 0
+  )
+mySBM_collection$estimate()
+clusters <- apply(mySBM_collection$memberships[[2]]$Z, 1, which.max)
+```
+
+And plot it:
+
+```{r plot Glasso stabs}
+V(g_stabs)$class <- clusters
+V(g_stabs)$size <- degree(g_stabs) * 5
+V(g_stabs)$frame.color <- "white"
+V(g_stabs)$color <- pal[V(g_stabs)$class]
+E(g_stabs)$arrow.mode <- 0
+plot(g_stabs)
+```
+
+What is the intersection with plot inferred with neighborhood selection and *simone*?
+
+```{r intersection}
+plot(igraph::intersection(g_stabs, g2))
+```
+
+
+## Practical: multiple network analysis (accounting for patient status)
+
+Now it is your turn: how about
+
+1. Independent network inference 
+  - Infer one network per patient status, with a method of your choice (*simone*, *stabsel*, or both!)
+  - Find some latent organisation in both networkd thanks to blockmodels
+  - Compare them with the descriptive statistics learnt during today course
+
+2. Coupled inference
+  - Use the *simone* multitask framework to infer the network jointly
+  - Try to find some edges specific to each patient status
+
+3. Optional 1: weighted penalties
+
+You may put some prior in the network inference model by weighting the penalty associated to each edge:
+
+To this end, build a matrix of weights which depends on the connection probability inferred by the SBM ($\varpropto (1 - \hat{\pi}_{ij})$) to refine the inferred networks (parameter $rho$ in function 'quic.graphical_model').
+
+3. Optional 2: multiattribute network
+
+You may find a consensus network by coupling transcriptomics and proteomics data: first determine the transcripts associated with the set of 20 proteins. Then use the package found here:
+
+```{r multivarNetwork install, eval = FALSE}
+devtools::install_github("jchiquet/multGGM", subdir = "multivarNetwork")
+```

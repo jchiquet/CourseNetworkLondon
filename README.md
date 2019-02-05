@@ -15,6 +15,11 @@ An introduction to network analysis and inference
 
 ## Labs
 
+**sheets** [PDF](labs/labs.pdf), [HTML](labs/labs.html) (download the
+html and reopen it from your favorite browser).
+
+-----
+
 You need to have a recent version of
 [Rstudio](https://www.rstudio.com/products/rstudio/download/) installed
 with [R](https://cran.r-project.org) \>= 3.5.1 and the following

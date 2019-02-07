@@ -3,11 +3,11 @@ title: "Network analysis of the Lymphome proteomics data set"
 author: "Julien Chiquet"
 date: "2/4/2019"
 output:
+  pdf_document:
+    toc: true
   html_document:
     toc: true
     toc_float: true
-  pdf_document:
-    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -204,25 +204,36 @@ plot(igraph::intersection(g_stabs, g2))
 
 Now it is your turn: how about
 
-1. Independent network inference 
-  - Infer one network per patient status, with a method of your choice (*simone*, *stabsel*, or both!)
-  - Find some latent organisation in both networkd thanks to blockmodels
-  - Compare them with the descriptive statistics learnt during today course
+1. Consensus and differential network from independent network inference 
+  - Infer one network per patient status, with a method of your choice (e.g. *stabsel* with 'quic' fit function, or neighborhood selection with *huge* and STaRS for model selection)
+  - Compare these two networks according to
+    - some descriptive statistics learnt during today course
+    - the clusterings obtained with blockmodels
+  - Build a  "differential" and a "consensus" network from the two network associated with each status
+  
+2. Robustness of the networks
 
-2. Coupled inference
+Let us try a "home-made" stability selection for evaluating the robustness of the differential or consensus network: For each patient status, 
+  - create $K$ subsamples with, says 90% of the original data
+  - redo the analysis described in 1.
+  - evaluate the stability of the differential and consensus network
+
+2. Consensus netork with coupled network inference
   - Use the *simone* multitask framework to infer the network jointly
   - Try to find some edges specific to each patient status
-
-3. Optional 1: weighted penalties
+  - Compare your results with the first approach (that consider independent network inference)
+  - If you have time (and multiple cores on your computer...), evaluate the robustness of the consensus network with resampling
+  
+A.1 Optional 1: weighted penalties
 
 You may put some prior in the network inference model by weighting the penalty associated to each edge:
 
 To this end, build a matrix of weights which depends on the connection probability inferred by the SBM ($\varpropto (1 - \hat{\pi}_{ij})$) to refine the inferred networks (parameter $rho$ in function 'quic.graphical_model').
 
-3. Optional 2: multiattribute network
+A.2 Optional 2: multiattribute network from proteomics and transcriptomics
 
 You may find a consensus network by coupling transcriptomics and proteomics data: first determine the transcripts associated with the set of 20 proteins. Then use the package found here:
 
 ```{r multivarNetwork install, eval = FALSE}
-devtools::install_github("jchiquet/multGGM", subdir = "multivarNetwork")
+devtools::install_github("jchiquet/multivarNetwork")
 ```

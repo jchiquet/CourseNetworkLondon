@@ -48,6 +48,7 @@ install.packages("blockmodels")
 
 ```{r GGM packages, eval = FALSE}
 install.packages("simone")
+install.packages("QUIC")
 install.packages("huge")
 ```
 

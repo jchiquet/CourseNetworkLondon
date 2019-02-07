@@ -15,8 +15,10 @@ An introduction to network analysis and inference
 
 ## Labs
 
-**sheets** [PDF](labs/labs.pdf), [HTML](labs/labs.html) (download the
-html and reopen it from your favorite browser).
+**sheets**
+[PDF](https://github.com/jchiquet/CourseNetworkLondon/raw/master/labs/labs.pdf),
+[HTML](https://github.com/jchiquet/CourseNetworkLondon/raw/master/labs/labs.html)
+(download the raw HTML and reopen it from your favorite browser).
 
 -----
 
@@ -37,8 +39,6 @@ install.packages("rmarkdown")
 
 ``` r
 install.packages("igraph")
-install.packages("sand")
-install.packages("sna")
 ```
 
 ### Packages for stochastic block models
@@ -51,7 +51,9 @@ install.packages("blockmodels")
 
 ``` r
 install.packages("simone")
+install.packages("QUIC")
 install.packages("huge")
+install.packages("stabs")
 ```
 
 ### Packages for fancy plotting

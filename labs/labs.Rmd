@@ -1,20 +1,21 @@
 ---
 title: "Network analysis of the Lymphome proteomics data set"
 author: "Julien Chiquet"
-date: "2/4/2019"
+date: "February 2019"
 output:
   pdf_document:
     toc: true
+    number_section: true
   html_document:
     toc: true
     toc_float: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, warnings = FALSE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, warnings = FALSE, fig.align="center")
 ```
 
-## Requirements
+# Requirements {-}
 
 ```{r requirement, message = FALSE}
 library(tidyverse)
@@ -30,7 +31,7 @@ library(RColorBrewer)
 pal <- brewer.pal(10, "Set3") # a fancy palette for graph
 ```
 
-## Basic proteomics data analysis
+# Basic proteomics data analysis
 
 We first load both proteomics and covariates
 
@@ -41,7 +42,7 @@ covariates <- readRDS("covariates.rds")
 
 Let us have a quick look on both data frames:
 
-### Covariates
+## Covariates
 
 First a quick look,
 
@@ -49,13 +50,20 @@ First a quick look,
 covariates %>% head() %>% knitr::kable()
 ```
 
-Then a pairs plot:
+Only women are subject to this disease, so let us remove men:
 
-```{r covariates pairs}
-GGally::ggpairs(covariates, columns = 3:5, aes(colour=disease))
+```{r remove men}
+proteomics <- proteomics[covariates$sex == "F", ]
+covariates <- covariates %>% filter(sex == "F") %>% dplyr::select(-sex)
 ```
 
-### Proteomics
+Then do a pairs plot:
+
+```{r covariates pairs}
+GGally::ggpairs(covariates, columns = 2:4, aes(colour = disease))
+```
+
+## Proteomics
 
 Again first a quick look:
 
@@ -63,18 +71,16 @@ Again first a quick look:
 proteomics %>% head() %>% knitr::kable()
 ```
 
+
 Simple PCA does not seem to show a strong structuration of the data due to the disease status:
 
 ```{r see PCA proteomics}
 pca <- prcomp(proteomics, scale. = TRUE)
 for_plot <- as_tibble(proteomics) %>% 
   add_column(disease = covariates$disease,
-             type    = covariates$type,
-             sex     = covariates$sex)
+             type    = covariates$type)
 autoplot(pca, loadings = TRUE, loadings.label = TRUE,
          data = for_plot, colour = 'disease')
-# autoplot(pca, loadings = TRUE, loadings.label = TRUE,
-#          data = for_plot, colour = 'sex')
 # autoplot(pca, loadings = TRUE, loadings.label = TRUE,
 #          data = for_plot, colour = 'type')
 ```
@@ -85,9 +91,9 @@ Still, there is some structure between the proteines:
 corrplot(cor(proteomics))
 ```
 
-## Tutorial: proteomics network reconstruction on pooled data
+# Tutorial: proteomics network reconstruction on pooled data
 
-### Neighborhood selection with *simone*
+## Neighborhood selection with *simone*
 
 We first retrieve the whole path of inferred networks with *simone*.
 
@@ -123,33 +129,35 @@ The ICL criterion choses 3 clusters.
 clusters <- apply(mySBM_collection$memberships[[2]]$Z, 1, which.max)
 ```
 
-The following piece of code plots a fancy version of this graph
-thanks to the *igraph* package: first from the adjacency matrix, second from the partial correlation
+The following piece of code returns a fancy version of this graph thanks to the *igraph* package ready for plotting: 
+
+```{r fancy plot igraph}
+fancy_igraph <- function(graph, clusters, factor = 5) {
+  V(graph)$class <- clusters
+  V(graph)$size <- degree(graph) * factor
+  V(graph)$frame.color <- "white"
+  V(graph)$color <- pal[V(graph)$class]
+  E(graph)$arrow.mode <- 0
+  graph
+}
+```
+
+Now, let us represent the graph from the adjacency matrix and a weighted version with partial correlation values :
 
 ```{r plot SBM igraph}
 g1 <- graph_from_adjacency_matrix(subNetwork, mode = "undirected", diag = FALSE)
-V(g1)$class <- clusters
-V(g1)$size <- degree(g1) * 5
-V(g1)$frame.color <- "white"
-V(g1)$color <- pal[V(g1)$class]
-E(g1)$arrow.mode <- 0
 
 partialCor <- -myNetwork$Theta
 partialCor <- partialCor[!to_remove, !to_remove]
 
 g2 <- graph_from_adjacency_matrix(partialCor, weighted = TRUE, mode = "undirected", diag = FALSE)
-V(g2)$class <- clusters
-V(g2)$size <- degree(g2) * 5
-V(g2)$frame.color <- "white"
-V(g2)$color <- pal[V(g2)$class]
-E(g2)$arrow.mode <- 0
 
 par(mfrow = c(1,2))
-plot(g1, main = "Adjacency Network")
-plot(g2, edge.width=20*E(g2)$weight, main = "Partial Correlations")
+plot(fancy_igraph(g1, clusters), main = "Adjacency Network")
+plot(fancy_igraph(g2, clusters), edge.width = 20*E(g2)$weight, main = "Partial Correlations")
 ```
 
-### Graphical-Lasso with Stability Selection
+## Graphical-Lasso with Stability Selection
 
 The graphical-Lasso is efficiently implemented by the QUIC algorithm. An alternative to BIC to choose the most stables edges in the network is the stability selection approach. It subsamples the original data set, run the algorithm on each subsample and estimate the probability of selection of each edge along the path.
 
@@ -185,52 +193,63 @@ clusters <- apply(mySBM_collection$memberships[[2]]$Z, 1, which.max)
 And plot it:
 
 ```{r plot Glasso stabs}
-V(g_stabs)$class <- clusters
-V(g_stabs)$size <- degree(g_stabs) * 5
-V(g_stabs)$frame.color <- "white"
-V(g_stabs)$color <- pal[V(g_stabs)$class]
-E(g_stabs)$arrow.mode <- 0
-plot(g_stabs)
+plot(fancy_igraph(g_stabs, clusters))
 ```
 
 What is the intersection with plot inferred with neighborhood selection and *simone*?
 
 ```{r intersection}
-plot(igraph::intersection(g_stabs, g2))
+consensus_graph <- igraph::intersection(g_stabs, g2)
+mySBM_collection <- 
+  BM_bernoulli(
+    "SBM_sym", 
+    as_adjacency_matrix(consensus_graph, sparse = FALSE),
+    verbosity = 0, plotting = ""
+  )
+mySBM_collection$estimate()
+clusters <- apply(mySBM_collection$memberships[[2]]$Z, 1, which.max)
+plot(
+  delete.vertices(
+    fancy_igraph(consensus_graph, clusters),
+    degree(consensus_graph) == 0
+    )
+  )
 ```
 
 
-## Practical: multiple network analysis (accounting for patient status)
+# Practical: network inference accounting for patient status
 
-Now it is your turn: how about
+## Consensus and differential network from independent network inference 
 
-1. Consensus and differential network from independent network inference 
   - Infer one network per patient status, with a method of your choice (e.g. *stabsel* with 'quic' fit function, or neighborhood selection with *huge* and STaRS for model selection)
   - Compare these two networks according to
-    - some descriptive statistics learnt during today course
-    - the clusterings obtained with blockmodels
+    - some descriptive statistics learnt during today's course
+    - the clusterings obtained with *blockmodels*
   - Build a  "differential" and a "consensus" network from the two network associated with each status
   
-2. Robustness of the networks
+## Robustness of the networks
 
 Let us try a "home-made" stability selection for evaluating the robustness of the differential or consensus network: For each patient status, 
   - create $K$ subsamples with, says 90% of the original data
-  - redo the analysis described in 1.
-  - evaluate the stability of the differential and consensus network
+  - repeat the analysis described in 2.1
+  - evaluate the stability of the differential and consensus networks
 
-2. Consensus netork with coupled network inference
-  - Use the *simone* multitask framework to infer the network jointly
+## Consensus network with joint inference
+
+  - Use the *simone* multitask framework to infer the networks jointly
   - Try to find some edges specific to each patient status
-  - Compare your results with the first approach (that consider independent network inference)
+  - Compare your results with the first approach (that consider network inference independently)
   - If you have time (and multiple cores on your computer...), evaluate the robustness of the consensus network with resampling
   
-A.1 Optional 1: weighted penalties
+## Optional 
+
+### Weighted penalties
 
 You may put some prior in the network inference model by weighting the penalty associated to each edge:
 
-To this end, build a matrix of weights which depends on the connection probability inferred by the SBM ($\varpropto (1 - \hat{\pi}_{ij})$) to refine the inferred networks (parameter $rho$ in function 'quic.graphical_model').
+To this end, build a matrix of weights which depends on the connection probabilities inferred by the SBM ($\varpropto (1 - \hat{\pi}_{ij})$) to refine the inferred networks (parameter $rho$ in function 'quic.graphical_model'). Connection probabilities can be extracted from a collection of *blockmodels* objects via `SBM_collection$model_parameters[[1]]$pi`.
 
-A.2 Optional 2: multiattribute network from proteomics and transcriptomics
+### Multiattribute network from proteomics and transcriptomics
 
 You may find a consensus network by coupling transcriptomics and proteomics data: first determine the transcripts associated with the set of 20 proteins. Then use the package found here:
 

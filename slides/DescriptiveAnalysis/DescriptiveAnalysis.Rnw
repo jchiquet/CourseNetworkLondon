@@ -3,7 +3,7 @@
 \def\currentCourse{An introduction to graph analysis and modeling}
 \def\currentInstitute{Julien Chiquet}
 \def\currentLogo{../common_figs/logo_imperial}
-\def\currentDate{February, 2019}
+\def\currentDate{September, 2019}
 \def\currentChapter{Descriptive Analysis of Network Data}
 
 <<preamble, child='../common_preamble.Rnw'>>=

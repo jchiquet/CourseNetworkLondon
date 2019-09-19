@@ -88,7 +88,7 @@ autoplot(pca, loadings = TRUE, loadings.label = TRUE,
 Still, there is some structure between the proteines:
 
 ```{r corrplot}
-corrplot(cor(proteomics))
+corrplot(cor(proteomics), order = "hclust")
 ```
 
 # Tutorial: proteomics network reconstruction on pooled data

@@ -3,8 +3,8 @@ An introduction to network analysis and inference
 
 > This repository regroups the material (slides, labs) associated to the
 > course about “graph analysis and inference”, as a part of the course
-> of Computational Epidemiology module on Friday 8 Feb 2019 at Imperial
-> College.
+> of Computational Epidemiology module on Friday, September the 20th,
+> 2019 at Imperial College.
 
 ## Slides
 

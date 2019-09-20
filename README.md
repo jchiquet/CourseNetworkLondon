@@ -54,6 +54,7 @@ install.packages("simone")
 install.packages("QUIC")
 install.packages("huge")
 install.packages("stabs")
+install.packages("PLNmodels")
 ```
 
 ### Packages for fancy plotting

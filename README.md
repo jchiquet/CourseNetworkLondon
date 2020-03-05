@@ -2,9 +2,8 @@ An introduction to network analysis and inference
 ================
 
 > This repository regroups the material (slides, labs) associated to the
-> course about “graph analysis and inference”, as a part of the course
-> of Computational Epidemiology module on Friday, September the 20th,
-> 2019 at Imperial College.
+> course about “graph analysis and inference”, given on various
+> occasionsat Imperial College.
 
 ## Slides
 
@@ -54,7 +53,6 @@ install.packages("simone")
 install.packages("QUIC")
 install.packages("huge")
 install.packages("stabs")
-install.packages("PLNmodels")
 ```
 
 ### Packages for fancy plotting

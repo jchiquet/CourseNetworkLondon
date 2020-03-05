@@ -31,6 +31,9 @@ library(RColorBrewer)
 pal <- brewer.pal(10, "Set3") # a fancy palette for graph
 ```
 
+
+
+
 # Basic proteomics data analysis
 
 We first load both proteomics and covariates

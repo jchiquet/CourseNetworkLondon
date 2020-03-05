@@ -53,7 +53,7 @@
 \def\currentCourse{An introduction to graph analysis and modeling}
 \def\currentInstitute{Julien Chiquet}
 \def\currentLogo{../common_figs/logo_imperial}
-\def\currentDate{September, 2019}
+\def\currentDate{March, 2020}
 \def\currentChapter{Descriptive Analysis of Network Data}
 
 
@@ -170,7 +170,7 @@
     \item Data = observed network
     \item Questions: central nodes? cluster structure? small-world property?
     \end{itemize}
-  \end{block}
+  \end{alertblock}
   
   \vfill
 
@@ -180,7 +180,7 @@
     \item Data = repeated signal observed at each node
     \item Questions: which nodes are connected?
     \end{itemize}
-  \end{alertblock}
+  \end{block}
 
   \vfill
 
@@ -314,7 +314,7 @@
   \end{definition}
 
   \begin{proposition}
-    The degree of $\clG$ are then simply obtained as the row-wise and/or column-wise sums of $\bA$.
+    The degrees of $\clG$ are then simply obtained as the row-wise and/or column-wise sums of $\bA$.
   \end{proposition}
 
   \begin{block}{Remark}
@@ -350,7 +350,7 @@
 \begin{frame}
   \frametitle{Layout and Vizualization}
   \framesubtitle{Example with circle plot}
-  
+
 
 
 \begin{knitrout}\scriptsize
@@ -389,35 +389,29 @@
   
 \end{frame}
 
-\begin{frame}[fragile, allowframebreaks]
-  \frametitle{Layout and Vizualization: \textbf{ggraph} way}
- 
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(ggraph)}
-\hlkwd{library}\hlstd{(gridExtra)}
-\hlstd{g1} \hlkwb{<-} \hlkwd{ggraph}\hlstd{(GBlog,} \hlkwc{layout} \hlstd{=} \hlstr{"fr"}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_edge_link}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"lightgray"}\hlstd{)} \hlopt{+} \hlkwd{geom_node_point}\hlstd{()} \hlopt{+} \hlkwd{theme_void}\hlstd{()}
-
-\hlstd{g2} \hlkwb{<-} \hlkwd{ggraph}\hlstd{(GBlog   ,} \hlkwc{layout} \hlstd{=} \hlstr{"kk"}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_edge_link}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"lightgray"}\hlstd{)} \hlopt{+} \hlkwd{geom_node_point}\hlstd{()} \hlopt{+} \hlkwd{theme_void}\hlstd{()}
-
-\hlstd{g3} \hlkwb{<-} \hlkwd{ggraph}\hlstd{(GBlog,} \hlkwc{layout} \hlstd{=} \hlstr{"linear"}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_edge_arc}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{alpha}\hlstd{=..index..),} \hlkwc{show.legend} \hlstd{=} \hlnum{FALSE}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_node_point}\hlstd{()} \hlopt{+} \hlkwd{theme_void}\hlstd{()}
-
-\hlstd{g4} \hlkwb{<-} \hlkwd{ggraph}\hlstd{(GBlog   ,} \hlkwc{layout} \hlstd{=} \hlstr{"linear"}\hlstd{,} \hlkwc{circular} \hlstd{=} \hlnum{TRUE}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_edge_link}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{alpha}\hlstd{=..index..),} \hlkwc{show.legend} \hlstd{=} \hlnum{FALSE}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_node_point}\hlstd{()} \hlopt{+} \hlkwd{theme_void}\hlstd{()}
-
-\hlkwd{grid.arrange}\hlstd{(g1, g2, g3, g4,} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{ncol} \hlstd{=} \hlnum{2}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/ggraph_vizu_1-1} 
-
-\end{knitrout}
-\end{frame}
+% \begin{frame}[fragile, allowframebreaks]
+%   \frametitle{Layout and Vizualization: \textbf{ggraph} way}
+%  
+% <<ggraph_vizu_1, echo=TRUE>>=
+% library(ggraph)
+% library(gridExtra)
+% g1 <- ggraph(GBlog, layout = "fr") + 
+%   geom_edge_link(color = "lightgray") + geom_node_point() + theme_void()
+% 
+% g2 <- ggraph(GBlog   , layout = "kk") + 
+%   geom_edge_link(color = "lightgray") + geom_node_point() + theme_void()
+% 
+% g3 <- ggraph(GBlog, layout = "linear") + 
+%   geom_edge_arc(aes(alpha=..index..), show.legend = FALSE) + 
+%   geom_node_point() + theme_void()
+% 
+% g4 <- ggraph(GBlog   , layout = "linear", circular = TRUE) + 
+%   geom_edge_link(aes(alpha=..index..), show.legend = FALSE) + 
+%   geom_node_point() + theme_void()
+% 
+% grid.arrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
+% @
+% \end{frame}
 
 \begin{frame}
   \frametitle{Layout and Vizualization}
@@ -605,60 +599,48 @@
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Jaccard Coefficient}
-
-  \begin{definition}[Jaccard Coefficient or Jaccard Index]
-The Jaccard coefficient \alert{measures similarity between finite sample sets}, and is defined as the size of the intersection divided by the size of the union of the sample sets:
-  \[
-  J(A,B)=\frac{|A\cap B|}{|A\cup B|} =\frac{|A\cap B|}{|A|+|B|-|A\cap B|}.
-  \]
-  \end{definition}
-
-  \begin{block}{Example}
-  It can be used to compared two sets of egdes. For instance
-  \begin{itemize}
-    \item for two networks $\clG$ and $\clH$ defined on the same set of node, we can compare the sets $\clE_\clG$ and $\clE_\clH$.
-    \item for a networks $\clG$ we can compute similarity between nodes with the Jaccard index and use it to define a weighted graph of similarity.
-  \end{itemize}
-  \end{block}
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Jaccard Coefficient: example}
-
-Plot the yeast PPI interaction network
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(sand)}
-\hlkwd{library}\hlstd{(igraph)}
-\hlkwd{plot}\hlstd{(ppi.CC,} \hlkwc{vertex.size}\hlstd{=}\hlnum{6}\hlstd{,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{layout}\hlstd{=layout_in_circle)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/jaccard-1} 
-
-\end{knitrout}
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Jaccard Coefficient: example II}
-
-Compute Jaccard similarity between vertices and give a image of this
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(Matrix)}
-\hlkwd{image}\hlstd{(}\hlkwd{Matrix}\hlstd{(igraph}\hlopt{::}\hlkwd{similarity}\hlstd{(ppi.CC,} \hlkwc{method} \hlstd{=} \hlstr{"jaccard"}\hlstd{)))}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/jaccardplot-1} 
-
-\end{knitrout}
-
-\end{frame}
+% \begin{frame}
+%   \frametitle{Jaccard Coefficient}
+% 
+%   \begin{definition}[Jaccard Coefficient or Jaccard Index]
+% The Jaccard coefficient \alert{measures similarity between finite sample sets}, and is defined as the size of the intersection divided by the size of the union of the sample sets:
+%   \[
+%   J(A,B)=\frac{|A\cap B|}{|A\cup B|} =\frac{|A\cap B|}{|A|+|B|-|A\cap B|}.
+%   \]
+%   \end{definition}
+% 
+%   \begin{block}{Example}
+%   It can be used to compared two sets of egdes. For instance
+%   \begin{itemize}
+%     \item for two networks $\clG$ and $\clH$ defined on the same set of node, we can compare the sets $\clE_\clG$ and $\clE_\clH$.
+%     \item for a networks $\clG$ we can compute similarity between nodes with the Jaccard index and use it to define a weighted graph of similarity.
+%   \end{itemize}
+%   \end{block}
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Jaccard Coefficient: example}
+% 
+% Plot the yeast PPI interaction network
+% <<jaccard>>=
+% library(sand)
+% library(igraph)
+% plot(ppi.CC, vertex.size=6, vertex.label=NA, layout=layout_in_circle)
+% @
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Jaccard Coefficient: example II}
+% 
+% Compute Jaccard similarity between vertices and give a image of this
+% <<jaccardplot>>=
+% library(Matrix)
+% image(Matrix(igraph::similarity(ppi.CC, method = "jaccard")))
+% @
+% 
+% \end{frame}
 
 %% ==========================================================================
 \subsection{Local measurements}
@@ -744,8 +726,8 @@ Create ego graphs around teacher and instructor
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{data}\hlstd{(karate)}
-\hlstd{ego.instr} \hlkwb{<-} \hlstd{igraph}\hlopt{::}\hlkwd{induced_subgraph}\hlstd{(karate,} \hlkwd{neighborhood}\hlstd{(karate,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{)[[}\hlnum{1}\hlstd{]])}
-\hlstd{ego.admin} \hlkwb{<-} \hlstd{igraph}\hlopt{::}\hlkwd{induced_subgraph}\hlstd{(karate,} \hlkwd{neighborhood}\hlstd{(karate,} \hlnum{1}\hlstd{,} \hlnum{34}\hlstd{)[[}\hlnum{1}\hlstd{]])}
+\hlstd{ego.instr} \hlkwb{<-} \hlstd{igraph}\hlopt{::}\hlkwd{induced_subgraph}\hlstd{(karate, igraph}\hlopt{::}\hlkwd{neighborhood}\hlstd{(karate,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{)[[}\hlnum{1}\hlstd{]])}
+\hlstd{ego.admin} \hlkwb{<-} \hlstd{igraph}\hlopt{::}\hlkwd{induced_subgraph}\hlstd{(karate, igraph}\hlopt{::}\hlkwd{neighborhood}\hlstd{(karate,} \hlnum{1}\hlstd{,} \hlnum{34}\hlstd{)[[}\hlnum{1}\hlstd{]])}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -856,30 +838,16 @@ Look for graph density and transitivity/clustering either globally or locally
     \end{enumerate}
   \end{block}
 
-\end{frame}
-
-\begin{frame}
-  \frametitle{Dissimilarity measures}
-
-  \begin{block}{Standards}
-    Use standard distances on adjacency matrix:
-    \begin{itemize}
-      \item Euclidean distance: $\displaystyle x_{ij} = \sqrt{\sum_{ij} (A_{ik} - A_{jk})^2} $
-      \item Manhattan distance: $\displaystyle x_{ij} = \sum_{ij} |A_{ik} - A_{jk})| $
-      \item  etc\dots
-    \end{itemize}  
-  \end{block}
-
-  \vfill
-
   \begin{block}{Graph-specific}
-    For instance,  modularity, betweeness, etc.
+    For instance, modularity, betweeness, clustering measure, etc.
   \end{block}
-  
+
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]
   \frametitle{Examples of graph clustering}
+
+
 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -906,11 +874,22 @@ Look for graph density and transitivity/clustering either globally or locally
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_walktrap}\hlstd{(karate)}
+\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_louvain}\hlstd{(karate)}
 \hlkwd{plot}\hlstd{(hc,karate)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/unnamed-chunk-5-1} 
+
+\end{knitrout}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_walktrap}\hlstd{(karate)}
+\hlkwd{plot}\hlstd{(hc,karate)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-6-1} 
 
 \end{knitrout}
 
@@ -965,7 +944,7 @@ Look for graph density and transitivity/clustering either globally or locally
 \hlkwd{plot}\hlstd{(hc,karate)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-6-1} 
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-7-1} 
 
 \end{knitrout}
 
@@ -1055,8 +1034,8 @@ Look for graph density and transitivity/clustering either globally or locally
 \hlkwd{average.path.length}\hlstd{(G3);} \hlkwd{diameter}\hlstd{(G3)}
 \end{alltt}
 \begin{verbatim}
-## [1] 4.642086
-## [1] 10
+## [1] 5.652144
+## [1] 12
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1346,7 +1325,7 @@ Look for graph density and transitivity/clustering either globally or locally
 \hlkwd{plot}\hlstd{(communities,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{vertex.color} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{3}\hlstd{,}\hlkwd{c}\hlstd{(}\hlnum{25}\hlstd{,} \hlnum{50}\hlstd{,} \hlnum{25}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-7-1} 
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-8-1} 
 
 \end{knitrout}
 
@@ -1364,7 +1343,7 @@ Look for graph density and transitivity/clustering either globally or locally
 \hlkwd{plot}\hlstd{(star,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{vertex.color} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{,}\hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,}\hlnum{96}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-8-1} 
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-9-1} 
 
 \end{knitrout}
 

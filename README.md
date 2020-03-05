@@ -3,7 +3,7 @@ An introduction to network analysis and inference
 
 > This repository regroups the material (slides, labs) associated to the
 > course about “graph analysis and inference”, given on various
-> occasionsat Imperial College.
+> occasions at Imperial College.
 
 ## Slides
 

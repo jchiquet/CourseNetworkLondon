@@ -7,7 +7,7 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-> This repository regroups the material (slides, labs) associated to the course about "graph analysis and inference", given on various occasionsat Imperial College.
+> This repository regroups the material (slides, labs) associated to the course about "graph analysis and inference", given on various occasions at Imperial College.
 
 ## Slides
 
